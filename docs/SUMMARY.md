@@ -1,6 +1,6 @@
 # Summary
 
-[Template](README.md)
+[KubeIntrospection](README.md)
 
 # User manual
 
