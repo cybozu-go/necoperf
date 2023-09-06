@@ -1,6 +1,6 @@
 # Summary
 
-[KubeIntrospection](README.md)
+[NecoPerf](README.md)
 
 # User manual
 
