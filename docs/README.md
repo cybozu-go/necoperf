@@ -1,3 +1,3 @@
-# KubeIntrospection documentation
+# NecoPerf documentation
 
-KubeIntrospection provides the ability to easily retrieve profiles of containers running on Kubernetes.
+NecoPerf provides the ability to easily retrieve profiles of containers running on Kubernetes.

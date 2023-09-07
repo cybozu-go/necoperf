@@ -2,9 +2,9 @@
 language = "en"
 multilingual = false
 src = "."
-title = "KubeIntrospection Documentation"
+title = "NecoPerf Documentation"
 
 [output.html]
-git-repository-url = "https://github.com/cybozu-go/kubeintrospection"
-edit-url-template = "https://github.com/cybozu-go/kubeintrospection/edit/main/docs/{path}"
-site-url = "/kubeintrospection/"
+git-repository-url = "https://github.com/cybozu-go/necoperf"
+edit-url-template = "https://github.com/cybozu-go/necoperf/edit/main/docs/{path}"
+site-url = "/necoperf/"
