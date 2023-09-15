@@ -1,17 +1,18 @@
 Design Document
 ===============
 
-NecoPerf provides an easy mechanism for kernel-based profiling in multi-tenancy Kubernetes cluster environments without giving users strong permissions.
+NecoPerf provides an easy mechanism for cpu profiling in Kubernetes multi-tenancy without giving users strong permissions.
 
 ## Context and Scope
 
-Currently, it is possible to get kernel-based profiling using [perf](https://perf.wiki.kernel.org/index.php/Main_Page) for containers running on Kubernetes, but it requires a lot of manual operations and strong permissions.
-To solve these problems, we provide NecoPerf, a mechanism to get profiling more easily.
+Currently, it is possible to retrieve cpu profiling using [Linux perf](https://perf.wiki.kernel.org/index.php/Main_Page) for application running on Kubernetes.
+But it requires a lot of manual operations and strong permissions.
+To solve these problems, we provide NecoPerf, a mechanism to more easily retrieve cpu profiling for application.
 NecoPerf can automate many manual operations.
 
 ### Goals
 
-- Provides a system for Kubernetes users to easily run perf command and retrieve profiling results
+- Provides a system for users to easily run perf command and retrieve cpu profiling for application
 - NecoPerf users can specify options when running perf command
 
 ### Non-goals
@@ -29,33 +30,33 @@ NecoPerf can automate many manual operations.
 
 This section describes the actual flow of a situation when a user uses perf command to retrieve profiling.
 
-- The assumption is that the Kubernetes cluster in User stories is used in a multi-tenant environment
+- The assumption is that the Kubernetes cluster in User stories is used in a multi-tenancy
   - There is a team managing the cluster and several teams using the cluster
   - The team that uses the cluster is called the tenant
   - Tenant do not have strong privileges
-  - The team managing the Kubernetes cluster is called Cluster Admin
+  - The team managing the Kubernetes cluster is called cluster admin
 
-- Tenant are aware that there are performance issues with their workloads and want to profile them using perf command to identify bottlenecks.
+- Tenant are aware that there are performance issues with their application and want to do a cpu profile them using perf command to identify bottlenecks.
   However, a lot of things need to be done manually, as the following steps are required to run perf command
   1. Install a perf that is compatible with the kernel version of the host operating system in the container image
   2. Modify the manifest to add a sidecar or ephemeral container with the necessary permissions to run perf
-  3. The user of tenant enters a sidecar or ephemeral container and executes perf command against the target container to retrieve the profile
+  3. The user of tenant enters a sidecar or ephemeral container and executes perf command against the target container to retrieve the cpu profile
 
 - Cluster Admin wants to minimize the permissions granted to the tenant.
   However, to run perf, the tenant needs to be able to grant  `CAP_SYS_ADMIN` and `CAP_SYS_PTRACE` permissions to the pod, which violates the principle of least privilege.
 
-NecoPerf does not require manual operations and allows for easy profiling of containers using perf command.
+NecoPerf does not require manual operations and allows for easy cpu profiling for application using perf command.
 
 ### Constraints
 
 - Debug symbols are required for perf to resolve symbols.
   These debug symbols must be included in the container image to be profiled
-- As NecoPerf performs profiling based on the PID, it may not be able to profile successfully if the target process is terminated during profiling
+- NecoPerf performs cpu profiling based on the PID of the application, so if the target process is killed during profiling, profiling will not continue and will terminate
 
 ### Risk and Mitigations
 
 - Security Risk
-  - Originally, `CAP_SYSLOG`, `CAP_SYS_ADMIN`, `CAP_SYS_CHROOT` and other permissions are required to run perf, but using necoperf is safe because it is not necessary to give those permissions to user workloads.
+  - Originally, `CAP_SYSLOG`, `CAP_SYS_ADMIN`, `CAP_SYS_CHROOT` and other permissions are required to run perf command, but using necoperf is safe because it is not necessary to give those permissions to tenant.
   On the other hand, deploying necoperf requires the permission to run `CAP_SYSLOG` and CRI APIs, so it should be managed correctly so that ordinary users cannot misuse it.
 - Performance Risk
   - To prevent tenant from running perf for long periods, the NecoPerf validates the values from the user request
