@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "pkg/rpc";
+
+package necoperf;
+
+service NecoPerf {
+    rpc Profile(PerfProfileRequest) returns (stream PerfProfileResponse);
+}
+
+message PerfProfileRequest {
+    string container_id = 1;
+    int64 timeout_seconds = 2;
+}
+
+message PerfProfileResponse {
+    bytes data = 1;
+}
