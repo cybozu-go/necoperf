@@ -1,8 +1,9 @@
 syntax = "proto3";
-
-option go_package = "pkg/rpc";
-
 package necoperf;
+
+import "google/protobuf/duration.proto";
+
+option go_package = "github.com/cybozu-go/necoperf/pkg/rpc";
 
 service NecoPerf {
     rpc Profile(PerfProfileRequest) returns (stream PerfProfileResponse);
@@ -10,7 +11,7 @@ service NecoPerf {
 
 message PerfProfileRequest {
     string container_id = 1;
-    int64 timeout_seconds = 2;
+    google.protobuf.Duration timeout = 2;
 }
 
 message PerfProfileResponse {

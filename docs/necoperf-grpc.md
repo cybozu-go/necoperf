@@ -29,7 +29,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | container_id | [string](#string) |  |  |
-| timeout_seconds | [int64](#int64) |  |  |
+| timeout | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
 
 
 
