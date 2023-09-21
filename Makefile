@@ -21,6 +21,10 @@ book: $(MDBOOK)
 	rm -rf docs/book
 	cd docs; $(MDBOOK) build
 
+.PHONY: build
+build:
+	mkdir -p bin
+	GOBIN=$(BIN_DIR) go install ./cmd/...
 
 .PHONY: test
 test:
