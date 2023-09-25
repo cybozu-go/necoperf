@@ -41,7 +41,7 @@ func (d *DaemonServer) Profile(req *rpc.PerfProfileRequest, stream rpc.NecoPerf_
 		err := status.Error(codes.Internal, "invalid PID is returned from CRI API")
 		return err
 	}
-	profileDataPath, err := d.perfExecuter.ExecRecord(ctx, d.tmpDir, pid, timeout)
+	profileDataPath, err := d.perfExecuter.ExecRecord(ctx, d.workDir, pid, timeout)
 	if err != nil {
 		return err
 	}

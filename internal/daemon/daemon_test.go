@@ -15,6 +15,12 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
+const (
+	tooLongTimeout = 10 * time.Hour
+	timeout        = 1 * time.Second
+	containerID    = "test-container"
+)
+
 func server(ctx context.Context) (rpc.NecoPerfClient, func()) {
 	buffer := 1024 * 1024
 	lis := bufconn.Listen(buffer)
@@ -53,12 +59,6 @@ func server(ctx context.Context) (rpc.NecoPerfClient, func()) {
 	client := rpc.NewNecoPerfClient(conn)
 	return client, closer
 }
-
-const (
-	tooLongTimeout = 10 * time.Hour
-	timeout        = 1 * time.Second
-	containerID    = "test-container"
-)
 
 func TestProfile(t *testing.T) {
 	ctx := context.Background()

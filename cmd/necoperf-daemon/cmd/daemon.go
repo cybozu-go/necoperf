@@ -10,12 +10,14 @@ import (
 
 var port int
 var runtimeEndpoint string
+var workDir string
 
 func init() {
 	rootCmd.AddCommand(daemonCmd)
 	flags := daemonCmd.Flags()
 	flags.IntVar(&port, "port", 6543, "Set server port number")
 	flags.StringVar(&runtimeEndpoint, "runtime-endpoint", "unix:///run/containerd/containerd.sock", "Set container runtime endpoint")
+	flags.StringVar(&workDir, "work-dir", "/var/necoperf", "Set working directory")
 }
 
 var daemonCmd = &cobra.Command{
@@ -24,7 +26,7 @@ var daemonCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		handler := slog.NewTextHandler(os.Stderr, nil)
 		logger := slog.New(handler)
-		daemon, err := daemon.New(logger, port, runtimeEndpoint, os.TempDir())
+		daemon, err := daemon.New(logger, port, runtimeEndpoint, workDir)
 		if err != nil {
 			return err
 		}

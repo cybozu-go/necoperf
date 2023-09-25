@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"os"
 	"time"
 
 	"github.com/cybozu-go/necoperf/internal/resource"
@@ -24,7 +25,7 @@ type DaemonServer struct {
 	server   *grpc.Server
 	port     int
 	endpoint string
-	tmpDir   string
+	workDir  string
 	rpc.UnimplementedNecoPerfServer
 	container    *resource.Container
 	perfExecuter *resource.PerfExecuter
@@ -35,7 +36,7 @@ const (
 	criTimeout = 30 * time.Second
 )
 
-func New(logger *slog.Logger, port int, endpoint, tmpDir string) (*DaemonServer, error) {
+func New(logger *slog.Logger, port int, endpoint, workDir string) (*DaemonServer, error) {
 	opts := []logging.Option{
 		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 	}
@@ -61,7 +62,7 @@ func New(logger *slog.Logger, port int, endpoint, tmpDir string) (*DaemonServer,
 		server:   serv,
 		port:     port,
 		endpoint: endpoint,
-		tmpDir:   tmpDir,
+		workDir:  workDir,
 	}, nil
 }
 
@@ -78,6 +79,10 @@ func (d *DaemonServer) Start() error {
 	healthpb.RegisterHealthServer(d.server, hs)
 	hs.Resume()
 	reflection.Register(d.server)
+
+	if err := d.setupWorkDir(); err != nil {
+		return err
+	}
 
 	if err := d.setupContainer(); err != nil {
 		return err
@@ -104,6 +109,21 @@ func (d *DaemonServer) Start() error {
 	})
 
 	return g.Run()
+}
+
+func (d *DaemonServer) setupWorkDir() error {
+	_, err := os.Stat(d.workDir)
+	if err == nil {
+		return nil
+	}
+	if !os.IsNotExist(err) {
+		return err
+	}
+
+	if err := os.MkdirAll(d.workDir, 0755); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (d *DaemonServer) setupContainer() error {
