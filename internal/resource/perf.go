@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cybozu-go/necoperf/pkg/constants"
+	"github.com/cybozu-go/necoperf/internal/constants"
 )
 
 const (

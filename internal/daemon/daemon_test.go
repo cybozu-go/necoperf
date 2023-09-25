@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cybozu-go/necoperf/pkg/rpc"
+	"github.com/cybozu-go/necoperf/internal/rpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"

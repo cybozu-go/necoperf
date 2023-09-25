@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/cybozu-go/necoperf/pkg/daemon"
+	"github.com/cybozu-go/necoperf/internal/daemon"
 	"github.com/spf13/cobra"
 )
 

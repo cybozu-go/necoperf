@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/cybozu-go/necoperf/pkg/rpc"
+	"github.com/cybozu-go/necoperf/internal/rpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

@@ -7,8 +7,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/cybozu-go/necoperf/pkg/resource"
-	"github.com/cybozu-go/necoperf/pkg/rpc"
+	"github.com/cybozu-go/necoperf/internal/resource"
+	"github.com/cybozu-go/necoperf/internal/rpc"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/oklog/run"
 	"google.golang.org/grpc"
