@@ -47,7 +47,7 @@ func (d *DaemonServer) Profile(req *rpc.PerfProfileRequest, stream rpc.NecoPerf_
 	}
 	defer os.Remove(profileDataPath)
 
-	scriptDataPath, err := d.perfExecuter.ExecScript(ctx, profileDataPath)
+	scriptDataPath, err := d.perfExecuter.ExecScript(ctx, profileDataPath, d.workDir)
 	if err != nil {
 		return err
 	}

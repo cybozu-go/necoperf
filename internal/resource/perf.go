@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/cybozu-go/necoperf/internal/constants"
+	"github.com/google/uuid"
 )
 
 const (
@@ -45,8 +46,17 @@ func NewPerfExecuter(logger *slog.Logger) (*PerfExecuter, error) {
 }
 
 func (p *PerfExecuter) ExecRecord(ctx context.Context, workDir string, pid int, timeout time.Duration) (string, error) {
-	profilingFileName := fmt.Sprintf("necoperf-%d.data", pid)
-	profilingPath := filepath.Join(workDir + "/" + profilingFileName)
+	profileDir := filepath.Join(workDir, "profile")
+	if err := os.MkdirAll(profileDir, 0755); err != nil {
+		return "", err
+	}
+
+	uuid, err := uuid.NewRandom()
+	if err != nil {
+		return "", err
+	}
+	profilingFileName := fmt.Sprintf("necoperf-%s.data", uuid.String())
+	profilingPath := filepath.Join(profileDir, profilingFileName)
 
 	t := timeout.Seconds()
 	perfArgs := []string{
@@ -66,12 +76,12 @@ func (p *PerfExecuter) ExecRecord(ctx context.Context, workDir string, pid int, 
 	return profilingPath, c.Run()
 }
 
-func (p *PerfExecuter) GetEvent(ctx context.Context, filePath string) (*bytes.Buffer, error) {
+func (p *PerfExecuter) GetEvent(ctx context.Context, path string) (*bytes.Buffer, error) {
 	var stdoutBuff bytes.Buffer
 	perfArgs := []string{
 		constants.ScriptSubcommand,
 		"-F", "event",
-		"-i", filePath,
+		"-i", path,
 	}
 
 	c := exec.CommandContext(ctx, p.binPath, perfArgs...)
@@ -89,10 +99,10 @@ func (p *PerfExecuter) HasPerfEvent(ctx context.Context, buf *bytes.Buffer) bool
 	return strings.Contains(buf.String(), constants.CpuEvent)
 }
 
-func (p *PerfExecuter) ExecScript(ctx context.Context, filePath string) (string, error) {
+func (p *PerfExecuter) ExecScript(ctx context.Context, path, workDir string) (string, error) {
 	var stdoutBuff bytes.Buffer
 
-	buf, err := p.GetEvent(ctx, filePath)
+	buf, err := p.GetEvent(ctx, path)
 	if err != nil {
 		return "", err
 	}
@@ -104,17 +114,26 @@ func (p *PerfExecuter) ExecScript(ctx context.Context, filePath string) (string,
 	perfArgs := []string{
 		constants.ScriptSubcommand,
 		"--no-inline",
-		"-i", filePath,
+		"-i", path,
 	}
 
 	c := exec.CommandContext(ctx, p.binPath, perfArgs...)
 	c.Stdout = &stdoutBuff
 	c.Stderr = os.Stderr
+	p.logger.Info("Executing perf script", "cmd", c.String())
+
 	if err := c.Run(); err != nil {
 		return "", err
 	}
 
-	scriptFilePath := strings.Replace(filePath, "data", "script", 1)
+	scriptDir := filepath.Join(workDir, "script")
+	if err := os.MkdirAll(scriptDir, 0755); err != nil {
+		return "", err
+	}
+
+	profilingFileName := filepath.Base(path)
+	scriptFileName := profilingFileName + ".script"
+	scriptFilePath := filepath.Join(scriptDir, scriptFileName)
 	f, err := os.OpenFile(scriptFilePath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return "", err
