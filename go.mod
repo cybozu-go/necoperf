@@ -1,6 +1,8 @@
 module github.com/cybozu-go/necoperf
 
-go 1.21.1
+go 1.21
+
+toolchain go1.21.1
 
 require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0
