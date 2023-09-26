@@ -56,7 +56,7 @@ func TestPerfExecutor(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = perfExecuter.ExecScript(ctx, path)
+	_, err = perfExecuter.ExecScript(ctx, path, os.TempDir())
 	if err != nil {
 		t.Fatal(err)
 	}
