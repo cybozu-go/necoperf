@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.24.2
-// source: pkg/rpc/necoperf.proto
+// source: internal/rpc/necoperf.proto
 
 package rpc
 
@@ -132,5 +132,5 @@ var NecoPerf_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "pkg/rpc/necoperf.proto",
+	Metadata: "internal/rpc/necoperf.proto",
 }

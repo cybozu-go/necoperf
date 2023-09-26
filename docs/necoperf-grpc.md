@@ -3,7 +3,7 @@
 
 ## Table of Contents
 
-- [pkg/rpc/necoperf.proto](#pkg_rpc_necoperf-proto)
+- [internal/rpc/necoperf.proto](#internal_rpc_necoperf-proto)
     - [PerfProfileRequest](#necoperf-PerfProfileRequest)
     - [PerfProfileResponse](#necoperf-PerfProfileResponse)
   
@@ -13,10 +13,10 @@
 
 
 
-<a name="pkg_rpc_necoperf-proto"></a>
+<a name="internal_rpc_necoperf-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## pkg/rpc/necoperf.proto
+## internal/rpc/necoperf.proto
 
 
 
