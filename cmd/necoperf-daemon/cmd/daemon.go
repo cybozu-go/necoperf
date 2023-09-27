@@ -8,29 +8,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var port int
-var runtimeEndpoint string
-var workDir string
+var (
+	port            int
+	runtimeEndpoint string
+	workDir         string
+)
 
-func init() {
-	rootCmd.AddCommand(daemonCmd)
-	flags := daemonCmd.Flags()
-	flags.IntVar(&port, "port", 6543, "Set server port number")
-	flags.StringVar(&runtimeEndpoint, "runtime-endpoint", "unix:///run/containerd/containerd.sock", "Set container runtime endpoint")
-	flags.StringVar(&workDir, "work-dir", "/var/necoperf", "Set working directory")
-}
+func NewDaemonCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "daemon",
+		Short: "Starts the daemon",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			handler := slog.NewTextHandler(os.Stderr, nil)
+			logger := slog.New(handler)
+			daemon, err := daemon.New(logger, port, runtimeEndpoint, workDir)
+			if err != nil {
+				return err
+			}
 
-var daemonCmd = &cobra.Command{
-	Use:   "daemon",
-	Short: "Starts the daemon",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		handler := slog.NewTextHandler(os.Stderr, nil)
-		logger := slog.New(handler)
-		daemon, err := daemon.New(logger, port, runtimeEndpoint, workDir)
-		if err != nil {
-			return err
-		}
+			return daemon.Start()
+		},
+	}
+	cmd.Flags().IntVar(&port, "port", 6543, "Set server port number")
+	cmd.Flags().StringVar(&runtimeEndpoint, "runtime-endpoint", "unix:///run/containerd/containerd.sock", "Set container runtime endpoint")
+	cmd.Flags().StringVar(&workDir, "work-dir", "/var/necoperf", "Set working directory")
 
-		return daemon.Start()
-	},
+	return cmd
 }

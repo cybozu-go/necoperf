@@ -6,16 +6,18 @@ import (
 	"time"
 
 	"github.com/cybozu-go/necoperf/internal/rpc"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 const (
 	maxTimeout = 10 * time.Minute // 10 minute
+	weight     = 1
 )
 
 func (d *DaemonServer) Profile(req *rpc.PerfProfileRequest, stream rpc.NecoPerf_ProfileServer) error {
-	ctx := stream.Context()
+	eg, ctx := errgroup.WithContext(stream.Context())
 	containerID := req.GetContainerId()
 	if len(containerID) == 0 {
 		err := status.Error(codes.InvalidArgument, "container ID is not set")
@@ -41,17 +43,35 @@ func (d *DaemonServer) Profile(req *rpc.PerfProfileRequest, stream rpc.NecoPerf_
 		err := status.Error(codes.Internal, "invalid PID is returned from CRI API")
 		return err
 	}
-	profileDataPath, err := d.perfExecuter.ExecRecord(ctx, d.workDir, pid, timeout)
-	if err != nil {
-		return err
-	}
-	defer os.Remove(profileDataPath)
 
-	scriptDataPath, err := d.perfExecuter.ExecScript(ctx, profileDataPath, d.workDir)
+	err = d.semaphore.Acquire(ctx, weight)
 	if err != nil {
 		return err
 	}
+
+	var scriptDataPath string
 	defer os.Remove(scriptDataPath)
+
+	eg.Go(func() error {
+		defer d.semaphore.Release(weight)
+
+		profileDataPath, err := d.perfExecuter.ExecRecord(ctx, d.workDir, pid, timeout)
+		defer os.Remove(profileDataPath)
+		if err != nil {
+			return err
+		}
+
+		scriptDataPath, err = d.perfExecuter.ExecScript(ctx, profileDataPath, d.workDir)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err := eg.Wait(); err != nil {
+		return err
+	}
 
 	f, err := os.Open(scriptDataPath)
 	if err != nil {

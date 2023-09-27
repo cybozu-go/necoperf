@@ -12,6 +12,7 @@ import (
 	"github.com/cybozu-go/necoperf/internal/rpc"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/oklog/run"
+	"golang.org/x/sync/semaphore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -21,11 +22,12 @@ import (
 )
 
 type DaemonServer struct {
-	logger   *slog.Logger
-	server   *grpc.Server
-	port     int
-	endpoint string
-	workDir  string
+	logger    *slog.Logger
+	server    *grpc.Server
+	port      int
+	endpoint  string
+	workDir   string
+	semaphore *semaphore.Weighted
 	rpc.UnimplementedNecoPerfServer
 	container    *resource.Container
 	perfExecuter *resource.PerfExecuter
@@ -34,6 +36,7 @@ type DaemonServer struct {
 const (
 	minTime    = 30 * time.Second
 	criTimeout = 30 * time.Second
+	maxWorkers = 2
 )
 
 func New(logger *slog.Logger, port int, endpoint, workDir string) (*DaemonServer, error) {
@@ -57,12 +60,15 @@ func New(logger *slog.Logger, port int, endpoint, workDir string) (*DaemonServer
 		),
 	)
 
+	semaphore := semaphore.NewWeighted(maxWorkers)
+
 	return &DaemonServer{
-		logger:   logger,
-		server:   serv,
-		port:     port,
-		endpoint: endpoint,
-		workDir:  workDir,
+		logger:    logger,
+		server:    serv,
+		port:      port,
+		endpoint:  endpoint,
+		workDir:   workDir,
+		semaphore: semaphore,
 	}, nil
 }
 
