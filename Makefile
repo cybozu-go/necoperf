@@ -1,4 +1,7 @@
+include Makefile.versions
+
 BIN_DIR := $(shell pwd)/bin
+ENVTEST ?= $(BIN_DIR)/setup-envtest
 
 # Tool versions
 MDBOOK_VERSION = 0.4.27
@@ -27,10 +30,8 @@ build:
 	GOBIN=$(BIN_DIR) go install ./cmd/...
 
 .PHONY: test
-test:
-	if find . -name go.mod | grep -q go.mod; then \
-		$(MAKE) test-go; \
-	fi
+test: envtest
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(BIN_DIR) -p path)" go test ./... -coverprofile cover.out -v
 
 .PHONY: test-go
 test-go: test-tools
@@ -56,13 +57,20 @@ docs/necoperf-grpc.md: internal/rpc/necoperf.proto
 ##@ Tools
 
 .PHONY: setup
-setup:
+setup: envtest
+	mkdir -p bin
 	curl -sfL -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTOC_VERSION)/protoc-$(PROTOC_VERSION)-linux-x86_64.zip
 	unzip -o protoc.zip bin/protoc 'include/*'
 	rm -f protoc.zip
 	GOBIN=$(PWD)/bin go install google.golang.org/protobuf/cmd/protoc-gen-go@v$(PROTOC_GEN_GO_VERSION)
 	GOBIN=$(PWD)/bin go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v$(PROTOC_GEN_GO_GRPC_VERSION)
 	GOBIN=$(PWD)/bin go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@v$(PROTOC_GEN_DOC_VERSION)
+
+.PHONY: envtest
+envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
+$(ENVTEST):
+	mkdir -p bin
+	test -s $(BIN_DIR)/setup-envtest || GOBIN=$(BIN_DIR) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
 
 $(MDBOOK):
 	mkdir -p bin
