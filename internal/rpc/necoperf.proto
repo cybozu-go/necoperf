@@ -3,7 +3,7 @@ package necoperf;
 
 import "google/protobuf/duration.proto";
 
-option go_package = "github.com/cybozu-go/necoperf/pkg/rpc";
+option go_package = "github.com/cybozu-go/necoperf/internal/rpc";
 
 service NecoPerf {
     rpc Profile(PerfProfileRequest) returns (stream PerfProfileResponse);

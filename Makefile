@@ -10,7 +10,7 @@ MDBOOK := $(BIN_DIR)/mdbook
 
 # Test tools
 PROTOC := PATH=$(PWD)/bin:'$(PATH)' $(PWD)/bin/protoc -I=$(PWD)/include:.
-PROTOC_OUTPUTS = pkg/rpc/necoperf.pb.go pkg/rpc/necoperf_grpc.pb.go docs/necoperf-grpc.md
+PROTOC_OUTPUTS = internal/rpc/necoperf.pb.go internal/rpc/necoperf_grpc.pb.go docs/necoperf-grpc.md
 STATICCHECK = $(BIN_DIR)/staticcheck
 
 .PHONY: all
@@ -21,6 +21,10 @@ book: $(MDBOOK)
 	rm -rf docs/book
 	cd docs; $(MDBOOK) build
 
+.PHONY: build
+build:
+	mkdir -p bin
+	GOBIN=$(BIN_DIR) go install ./cmd/...
 
 .PHONY: test
 test:
@@ -40,13 +44,13 @@ test-go: test-tools
 generate:
 	$(MAKE) $(PROTOC_OUTPUTS)
 
-pkg/rpc/necoperf.pb.go: pkg/rpc/necoperf.proto
+internal/rpc/necoperf.pb.go: internal/rpc/necoperf.proto
 	$(PROTOC) --go_out=module=github.com/cybozu-go/necoperf:. $<
 
-pkg/rpc/necoperf_grpc.pb.go: pkg/rpc/necoperf.proto
+internal/rpc/necoperf_grpc.pb.go: internal/rpc/necoperf.proto
 	$(PROTOC) --go-grpc_out=module=github.com/cybozu-go/necoperf:. $<
 
-docs/necoperf-grpc.md: pkg/rpc/necoperf.proto
+docs/necoperf-grpc.md: internal/rpc/necoperf.proto
 	$(PROTOC) --doc_out=docs --doc_opt=markdown,$@ $<
 
 ##@ Tools
