@@ -1,0 +1,37 @@
+ARG FLATCAR_VERSION
+FROM ghcr.io/cybozu/golang:1.21-jammy as builder
+
+WORKDIR /work
+COPY go.mod go.mod
+COPY go.sum go.sum
+
+COPY cmd/necoperf-daemon cmd/necoperf-daemon
+COPY internal internal
+RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o necoperf-daemon ./cmd/necoperf-daemon
+
+FROM ghcr.io/flatcar/flatcar-sdk-amd64:${FLATCAR_VERSION} as flatcar
+RUN ldd /usr/bin/perf | cut -d" " -f3 | xargs tar --dereference -cf libs.tar
+
+FROM scratch
+LABEL org.opencontainers.image.source https://github.com/cybozu-go/necoperf
+ENV HOME=/home/necoperf
+COPY --from=flatcar /bin/ /bin/
+COPY --from=flatcar /sbin/setcap /sbin/setcap
+COPY --from=flatcar /lib64 /lib64
+COPY --from=flatcar /usr/bin/perf /usr/bin/sleep /usr/bin/
+
+# install perf dependency
+COPY --from=flatcar /libs.tar /libs.tar
+RUN mkdir -p /usr/lib64 \
+    && tar -xf libs.tar \
+    && rm libs.tar
+
+COPY --from=builder /work/necoperf-daemon /usr/local/bin/necoperf-daemon
+
+RUN setcap "cap_perfmon,cap_sys_ptrace,cap_syslog,cap_sys_admin,cap_sys_chroot=ep" /usr/bin/perf \
+    && mkdir -p ${HOME} \
+    && chown -R 1000:1000 ${HOME}
+WORKDIR ${HOME}
+
+USER 1000:1000
+ENTRYPOINT ["/usr/local/bin/necoperf-daemon", "start"]

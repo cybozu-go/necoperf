@@ -54,6 +54,15 @@ internal/rpc/necoperf_grpc.pb.go: internal/rpc/necoperf.proto
 docs/necoperf-grpc.md: internal/rpc/necoperf.proto
 	$(PROTOC) --doc_out=docs --doc_opt=markdown,$@ $<
 
+.PHONY: docker-build
+docker-build: build
+	docker build -t necoperf-daemon:dev --build-arg="FLATCAR_VERSION=$(FLATCAR_VERSION)" -f Dockerfile.daemon .
+	docker build -t necoperf-cli:dev -f Dockerfile.cli .
+
+.PHONY: e2e
+e2e:
+	make -C e2e
+
 ##@ Tools
 
 .PHONY: setup
