@@ -1,0 +1,53 @@
+builds:
+  - id: necoperf-cli
+    main: ./cmd/necoperf-cli
+    binary: necoperf-cli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+  - id: necoperf-daemon
+    main: ./cmd/necoperf-daemon
+    binary: necoperf-daemon
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: necoperf-cli
+    builds: [necoperf-cli]
+    name_template: "necoperf-cli_{{ .Tag }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    wrap_in_directory: false
+    format: tar.gz
+    files:
+      - LICENSE
+
+  - id: necoperf-daemon
+    builds: [necoperf-daemon]
+    name_template: "necoperf-daemon_{{ .Tag }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    wrap_in_directory: false
+    format: tar.gz
+    files:
+      - LICENSE
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  use: github-native
+
+release:
+  github:
+    owner: zeroalphat
+    name: necoperf-cli
+  prerelease: auto
+  name_template: "Release {{ .Tag }}"
