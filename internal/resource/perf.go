@@ -96,7 +96,7 @@ func (p *PerfExecuter) GetEvent(ctx context.Context, path string) (*bytes.Buffer
 
 // Check if events are contained in the perf.data file.
 func (p *PerfExecuter) HasPerfEvent(ctx context.Context, buf *bytes.Buffer) bool {
-	return strings.Contains(buf.String(), constants.CpuEvent)
+	return strings.Contains(buf.String(), constants.CyclesEvent) || strings.Contains(buf.String(), constants.CpuClockEvent)
 }
 
 func (p *PerfExecuter) ExecScript(ctx context.Context, path, workDir string) (string, error) {

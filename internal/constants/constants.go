@@ -5,7 +5,8 @@ const (
 	ScriptSubcommand  = "script"
 	ProfilingFileName = "perf.data"
 	ScriptFileName    = "perf.script"
-	CpuEvent          = "cpu-clock:pppH:"
+	CpuClockEvent     = "cpu-clock:"
+	CyclesEvent       = "cycles:"
 )
 
 const (
