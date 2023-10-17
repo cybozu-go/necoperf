@@ -56,7 +56,7 @@ func (d *Discovery) GetPodList(ctx context.Context, necoperfNS string) (*corev1.
 }
 
 func (d *Discovery) GetContainerID(pod *corev1.Pod, containerName string) (string, error) {
-	if len(containerName) == 0 && len(pod.Status.Conditions) >= 1 {
+	if len(containerName) == 0 && len(pod.Spec.Containers) >= 1 {
 		containerName = pod.Spec.Containers[0].Name
 	}
 
