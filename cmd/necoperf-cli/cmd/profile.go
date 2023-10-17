@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
@@ -49,7 +50,7 @@ func NewProfileCommand() *cobra.Command {
 				return err
 			}
 
-			ctx := cmd.Context()
+			ctx := context.Background()
 			pod, err := client.Discovery.GetPod(ctx, config.namespace, config.podName)
 			if err != nil {
 				return err
