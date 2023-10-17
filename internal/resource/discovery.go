@@ -13,10 +13,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-const (
-	port = 6543
-)
-
 type Discovery struct {
 	logger *slog.Logger
 	client client.Client
@@ -72,18 +68,31 @@ func (d *Discovery) GetContainerID(pod *corev1.Pod, containerName string) (strin
 }
 
 func (d *Discovery) DiscoveryServerAddr(pods *corev1.PodList, hostIP string) (string, error) {
-	var podIP string
-	for _, pod := range pods.Items {
-		if pod.Status.HostIP == hostIP {
-			podIP = pod.Status.PodIP
+	var podIP, addr string
+	var pod *corev1.Pod
+
+	for _, p := range pods.Items {
+		if p.Status.HostIP == hostIP {
+			pod = &p
+			break
 		}
 	}
+	podIP = pod.Status.PodIP
 	if len(podIP) == 0 {
 		return "", errors.New("failed to get pod IP")
 	}
 
-	addr := fmt.Sprintf("%s:%s", podIP, strconv.Itoa(port))
-	d.logger.Info("found the pod IP of necoperf", "hostIP", hostIP, "podIP", podIP)
+	for _, c := range pod.Spec.Containers {
+		for _, p := range c.Ports {
+			if p.Name == constants.NecoperfGrpcPortName {
+				addr = fmt.Sprintf("%s:%s", podIP, strconv.Itoa(int(p.ContainerPort)))
+			}
+		}
+	}
+	if len(addr) == 0 {
+		addr = fmt.Sprintf("%s:%s", podIP, strconv.Itoa(constants.NecoPerfGrpcServerPort))
+	}
+	d.logger.Info("found the address of necoperf grpc server", "hostIP", hostIP, "addr", addr)
 
 	return addr, nil
 }

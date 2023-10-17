@@ -13,3 +13,8 @@ const (
 	LabelAppName    = "app.kubernetes.io/name"
 	AppNameNecoPerf = "necoperf-daemon"
 )
+
+const (
+	NecoPerfGrpcServerPort = 6543
+	NecoperfGrpcPortName   = "necoperf-grpc"
+)
