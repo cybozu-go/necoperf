@@ -34,7 +34,7 @@ func isPodReady(pod *corev1.Pod) bool {
 func NewProfileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "profile",
-		Short: "Exec perf profile of the target container",
+		Short: "Perform CPU profiling on the target container",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			config.podName = args[0]
@@ -88,11 +88,11 @@ func NewProfileCommand() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
-	cmd.Flags().StringVar(&config.namespace, "namespace", "default", "kubernetes namespace")
-	cmd.Flags().StringVar(&config.outputDir, "outputDir", "/tmp", "output data directory")
-	cmd.Flags().StringVar(&config.containerName, "container", "", "container name")
-	cmd.Flags().StringVar(&config.necoperfNS, "necoperf-namespace", "kube-system", "necoperf namespace")
-	cmd.Flags().DurationVar(&config.timeout, "timeout", time.Second*30, "timeout seconds")
+	cmd.Flags().StringVar(&config.necoperfNS, "necoperf-namespace", "necoperf", "Namespace in which necoperf-daemon is running")
+	cmd.Flags().StringVarP(&config.namespace, "namespace", "n", "default", "Namespace in pod being profiled is running")
+	cmd.Flags().StringVar(&config.containerName, "container", "", "Specify the container name to profile")
+	cmd.Flags().DurationVar(&config.timeout, "timeout", 30*time.Second, "Time to run cpu profiling on server")
+	cmd.Flags().StringVar(&config.outputDir, "outputDir", "/tmp", "Directory to output profiling result")
 
 	return cmd
 }
