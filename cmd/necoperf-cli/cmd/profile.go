@@ -46,29 +46,30 @@ func NewProfileCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if err := client.SetupDiscovery(); err != nil {
+			ds, err := client.SetupDiscovery()
+			if err != nil {
 				return err
 			}
 
 			ctx := context.Background()
-			pod, err := client.Discovery.GetPod(ctx, config.namespace, config.podName)
+			pod, err := ds.GetPod(ctx, config.namespace, config.podName)
 			if err != nil {
 				return err
 			}
 			if !isPodReady(pod) {
 				return fmt.Errorf("pod %s is not ready", pod.Name)
 			}
-			containerID, err := client.Discovery.GetContainerID(pod, config.containerName)
+			containerID, err := ds.GetContainerID(pod, config.containerName)
 			if err != nil {
 				return err
 			}
 			logger.Info("get container id", "podName", config.podName, "containerID", containerID)
 
-			pods, err := client.Discovery.GetPodList(ctx, config.necoperfNS)
+			pods, err := ds.GetPodList(ctx, config.necoperfNS)
 			if err != nil {
 				return err
 			}
-			addr, err := client.Discovery.DiscoveryServerAddr(pods, pod.Status.HostIP)
+			addr, err := ds.DiscoveryServerAddr(pods, pod.Status.HostIP)
 			if err != nil {
 				return err
 			}

@@ -20,10 +20,9 @@ import (
 )
 
 type Client struct {
-	logger    *slog.Logger
-	client    rpc.NecoPerfClient
-	Discovery *resource.Discovery
-	Timeout   time.Duration
+	logger  *slog.Logger
+	client  rpc.NecoPerfClient
+	Timeout time.Duration
 }
 
 // https://github.com/grpc-ecosystem/go-grpc-middleware/blob/main/interceptors/logging/examples/slog/example_test.go
@@ -93,24 +92,23 @@ func (c *Client) Profile(ctx context.Context, podName, containerID, DataDir stri
 	return nil
 }
 
-func (c *Client) SetupDiscovery() error {
+func (c *Client) SetupDiscovery() (*resource.Discovery, error) {
 	config, err := config.GetConfig()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	k8sClient, err := client.New(config, client.Options{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	d, err := resource.NewDiscovery(c.logger, k8sClient)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	c.Discovery = d
 
-	return nil
+	return d, nil
 }
 
 func (c *Client) SetupGrpcClient(addr string) error {
