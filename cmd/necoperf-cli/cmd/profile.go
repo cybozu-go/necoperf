@@ -38,6 +38,7 @@ func NewProfileCommand() *cobra.Command {
 		Short: "Perform CPU profiling on the target container",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			cmd.SilenceUsage = true
 			config.podName = args[0]
 			handler := slog.NewTextHandler(os.Stderr, nil)
 			logger := slog.New(handler)
@@ -87,8 +88,6 @@ func NewProfileCommand() *cobra.Command {
 
 			return nil
 		},
-		SilenceUsage:  true,
-		SilenceErrors: true,
 	}
 	cmd.Flags().StringVar(&config.necoperfNS, "necoperf-namespace", "necoperf", "Namespace in which necoperf-daemon is running")
 	cmd.Flags().StringVarP(&config.namespace, "namespace", "n", "default", "Namespace in pod being profiled is running")
