@@ -36,6 +36,7 @@ func NewProfileCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "profile",
 		Short: "Perform CPU profiling on the target container",
+		Long:  "Perform CPU profiling on the target container",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true

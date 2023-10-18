@@ -8,7 +8,9 @@ import (
 
 func NewRootCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "necoperf-cli",
+		Use:   "necoperf-cli",
+		Short: "necoperf-cli is a command line tool for necoperf",
+		Long:  "necoperf-cli is a command line tool for necoperf",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return cmd.Help()
 		},
