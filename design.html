@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>NecoPerf Documentation</title>
-        <meta name="robots" content="noindex" />
+        <title>Design notes - NecoPerf Documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -82,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">NecoPerf</a></li><li class="chapter-item expanded affix "><li class="part-title">User manual</li><li class="chapter-item expanded affix "><li class="part-title">Developer documents</li><li class="chapter-item expanded "><a href="design.html"><strong aria-hidden="true">1.</strong> Design notes</a></li><li class="chapter-item expanded "><a href="release.html"><strong aria-hidden="true">2.</strong> Release procedure</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">NecoPerf</a></li><li class="chapter-item expanded affix "><li class="part-title">User manual</li><li class="chapter-item expanded affix "><li class="part-title">Developer documents</li><li class="chapter-item expanded "><a href="design.html" class="active"><strong aria-hidden="true">1.</strong> Design notes</a></li><li class="chapter-item expanded "><a href="release.html"><strong aria-hidden="true">2.</strong> Release procedure</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -120,6 +119,9 @@
                         <a href="https://github.com/cybozu-go/necoperf" title="Git repository" aria-label="Git repository">
                             <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
+                        <a href="https://github.com/cybozu-go/necoperf/edit/main/docs/./design.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
 
                     </div>
                 </div>
@@ -146,9 +148,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="necoperf-documentation"><a class="header" href="#necoperf-documentation">NecoPerf documentation</a></h1>
-<p>NecoPerf provides the ability to easily retrieve profiles of containers running on Kubernetes.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="design-document"><a class="header" href="#design-document">Design Document</a></h1>
+                        <h1 id="design-document"><a class="header" href="#design-document">Design Document</a></h1>
 <p>NecoPerf provides an easy mechanism for cpu profiling in Kubernetes multi-tenancy without giving users strong permissions.</p>
 <h2 id="context-and-scope"><a class="header" href="#context-and-scope">Context and Scope</a></h2>
 <p>Currently, it is possible to retrieve cpu profiling using <a href="https://perf.wiki.kernel.org/index.php/Main_Page">Linux perf</a> for application running on Kubernetes.
@@ -312,78 +312,18 @@ If you deploy the sidecar container later, you must tolerate the pod to restart.
 <li>The cluster administrator needs to authorise the tenant to set permissions such as <code>CAP_SYS_ADMIN</code> to Pod</li>
 <li>It is difficult for tenant to prepare a version of perf command that is compatible with the host OS</li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="release-procedure"><a class="header" href="#release-procedure">Release procedure</a></h1>
-<p>This document describes how to release a new version.</p>
-<h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
-<p>Follow <a href="https://semver.org/spec/v2.0.0.html">semantic versioning 2.0.0</a> to choose the new version number.</p>
-<h2 id="prepare-change-log-entries"><a class="header" href="#prepare-change-log-entries">Prepare change log entries</a></h2>
-<p>Add notable changes since the last release to <a href="CHANGELOG.html">CHANGELOG.md</a>.
-It should look like:</p>
-<pre><code class="language-markdown">(snip)
-## [Unreleased]
-
-### Added
-- Implement ... (#35)
-
-### Changed
-- Fix a bug in ... (#33)
-
-### Removed
-- Deprecated `-option` is removed ... (#39)
-
-(snip)
-</code></pre>
-<h2 id="bump-version"><a class="header" href="#bump-version">Bump version</a></h2>
-<ol>
-<li>
-<p>Determine a new version number. Then set <code>VERSION</code> variable.</p>
-<pre><code class="language-console"># Set VERSION and confirm it. It should not have &quot;v&quot; prefix.
-$ VERSION=x.y.z
-$ echo $VERSION
-</code></pre>
-</li>
-<li>
-<p>Make a branch to release</p>
-<pre><code class="language-console">$ git neco dev &quot;bump-$VERSION&quot;
-</code></pre>
-</li>
-<li>
-<p>Edit <code>CHANGELOG.md</code> for the new version (<a href="https://github.com/cybozu-go/etcdpasswd/commit/77d95384ac6c97e7f48281eaf23cb94f68867f79">example</a>).</p>
-</li>
-<li>
-<p>Commit the change and push it.</p>
-<pre><code class="language-console">$ git commit -a -m &quot;Bump version to $VERSION&quot;
-$ git neco review
-</code></pre>
-</li>
-<li>
-<p>Merge this branch.</p>
-</li>
-<li>
-<p>Add a git tag to the main HEAD, then push it.</p>
-<pre><code class="language-console"># Set VERSION again.
-$ VERSION=x.y.z
-$ echo $VERSION
-
-$ git checkout main
-$ git pull
-$ git tag -a -m &quot;Release v$VERSION&quot; &quot;v$VERSION&quot;
-
-# Make sure the release tag exists.
-$ git tag -ln | grep $VERSION
-
-$ git push origin &quot;v$VERSION&quot;
-</code></pre>
-</li>
-</ol>
-<p>GitHub actions will build and push artifacts such as container images and
-create a new GitHub release.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next" href="release.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -391,7 +331,13 @@ create a new GitHub release.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next" href="release.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
@@ -414,11 +360,6 @@ create a new GitHub release.</p>
 
         <!-- Custom JS scripts -->
 
-        <script>
-        window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
-        });
-        </script>
 
     </div>
     </body>
