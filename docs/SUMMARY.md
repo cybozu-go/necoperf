@@ -6,4 +6,5 @@
 
 # Developer documents
 
+- [Design notes](design.md)
 - [Release procedure](release.md)
