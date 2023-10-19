@@ -77,9 +77,13 @@ func (d *Discovery) DiscoveryServerAddr(pods *corev1.PodList, hostIP string) (st
 			break
 		}
 	}
+	if pod == nil {
+		return "", fmt.Errorf("failed to find any necoperf pod on host %q", hostIP)
+	}
+
 	podIP = pod.Status.PodIP
 	if len(podIP) == 0 {
-		return "", errors.New("failed to get pod IP")
+		return "", fmt.Errorf("failed to get pod IP from %q", pod.Name)
 	}
 
 	for _, c := range pod.Spec.Containers {
