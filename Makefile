@@ -70,7 +70,7 @@ setup: envtest
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
 $(ENVTEST):
 	mkdir -p bin
-	test -s $(BIN_DIR)/setup-envtest || GOBIN=$(BIN_DIR) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+	GOBIN=$(BIN_DIR) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
 
 $(MDBOOK):
 	mkdir -p bin
