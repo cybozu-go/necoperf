@@ -94,7 +94,7 @@ func NewProfileCommand() *cobra.Command {
 	cmd.Flags().StringVarP(&config.namespace, "namespace", "n", "default", "Namespace in pod being profiled is running")
 	cmd.Flags().StringVar(&config.containerName, "container", "", "Specify the container name to profile")
 	cmd.Flags().DurationVar(&config.timeout, "timeout", 30*time.Second, "Time to run cpu profiling on server")
-	cmd.Flags().StringVar(&config.outputDir, "outputDir", "/tmp", "Directory to output profiling result")
+	cmd.Flags().StringVar(&config.outputDir, "output-dir", "/tmp", "Directory to output profiling result")
 
 	return cmd
 }
