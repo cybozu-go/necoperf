@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/cybozu-go/necoperf/internal/constants"
 	"github.com/cybozu-go/necoperf/internal/daemon"
 	"github.com/spf13/cobra"
 )
@@ -29,7 +30,7 @@ func NewDaemonCommand() *cobra.Command {
 			return daemon.Start()
 		},
 	}
-	cmd.Flags().IntVar(&port, "port", 6543, "Set server port number")
+	cmd.Flags().IntVar(&port, "port", constants.NecoPerfGrpcServerPort, "Set server port number")
 	cmd.Flags().StringVar(&runtimeEndpoint, "runtime-endpoint", "unix:///run/containerd/containerd.sock", "Set container runtime endpoint")
 	cmd.Flags().StringVar(&workDir, "work-dir", "/var/necoperf", "Set working directory")
 
