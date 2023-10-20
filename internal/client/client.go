@@ -45,7 +45,7 @@ func (c *Client) Save(dataDir, podName string) (*os.File, error) {
 		return nil, err
 	}
 
-	profileFilePath := filepath.Join(dataDir + "/" + podName + ".script")
+	profileFilePath := filepath.Join(dataDir, podName+".script")
 	f, err := os.Create(profileFilePath)
 	if err != nil {
 		return nil, err
