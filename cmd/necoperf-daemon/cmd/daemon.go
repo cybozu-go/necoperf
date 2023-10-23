@@ -17,7 +17,7 @@ var (
 
 func NewDaemonCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "daemon",
+		Use:   "start",
 		Short: "Starts the daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			handler := slog.NewTextHandler(os.Stderr, nil)
@@ -30,9 +30,9 @@ func NewDaemonCommand() *cobra.Command {
 			return daemon.Start()
 		},
 	}
-	cmd.Flags().IntVar(&port, "port", constants.NecoPerfGrpcServerPort, "Set server port number")
-	cmd.Flags().StringVar(&runtimeEndpoint, "runtime-endpoint", "unix:///run/containerd/containerd.sock", "Set container runtime endpoint")
-	cmd.Flags().StringVar(&workDir, "work-dir", "/var/necoperf", "Set working directory")
+	cmd.Flags().IntVar(&port, "port", constants.NecoPerfGrpcServerPort, "Port number on which the grpc server runs")
+	cmd.Flags().StringVar(&runtimeEndpoint, "runtime-endpoint", "unix:///run/containerd/containerd.sock", "Container runtime endpoint to connect to")
+	cmd.Flags().StringVar(&workDir, "work-dir", "/var/necoperf", "Directory for storing profiling result")
 
 	return cmd
 }
