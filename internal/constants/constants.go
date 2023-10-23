@@ -15,7 +15,7 @@ const (
 )
 
 const (
-	NecoPerfMetricsPort       = 6541
+	NecoPerfMetricsPort    = 6541
 	NecoPerfGrpcServerPort = 6543
 	NecoperfGrpcPortName   = "necoperf-grpc"
 )
