@@ -17,7 +17,7 @@ var (
 
 func NewDaemonCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "daemon",
+		Use:   "start",
 		Short: "Starts the daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			handler := slog.NewTextHandler(os.Stderr, nil)
