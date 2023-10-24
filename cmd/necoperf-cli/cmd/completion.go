@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -62,7 +61,6 @@ func containerCompletionFunc(cmd *cobra.Command, args []string, toComplete strin
 		Name:      args[0],
 	}, pod)
 	if err != nil {
-		fmt.Println(err)
 		return nil, cobra.ShellCompDirectiveError
 	}
 
