@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/cybozu-go/necoperf/internal/resource"
 	"github.com/cybozu-go/necoperf/internal/rpc"
+	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/oklog/run"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/semaphore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -22,12 +26,13 @@ import (
 )
 
 type DaemonServer struct {
-	logger    *slog.Logger
-	server    *grpc.Server
-	port      int
-	endpoint  string
-	workDir   string
-	semaphore *semaphore.Weighted
+	logger      *slog.Logger
+	server      *grpc.Server
+	port        int
+	metricsPort int
+	endpoint    string
+	workDir     string
+	semaphore   *semaphore.Weighted
 	rpc.UnimplementedNecoPerfServer
 	container    *resource.Container
 	perfExecuter *resource.PerfExecuter
@@ -39,7 +44,17 @@ const (
 	maxWorkers = 2
 )
 
-func New(logger *slog.Logger, port int, endpoint, workDir string) (*DaemonServer, error) {
+var (
+	reg            = prometheus.NewRegistry()
+	metricsHandler = promhttp.HandlerFor(
+		reg,
+		promhttp.HandlerOpts{
+			ErrorHandling: promhttp.ContinueOnError,
+		},
+	)
+)
+
+func New(logger *slog.Logger, port, metricsPort int, endpoint, workDir string) (*DaemonServer, error) {
 	opts := []logging.Option{
 		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 	}
@@ -48,27 +63,34 @@ func New(logger *slog.Logger, port int, endpoint, workDir string) (*DaemonServer
 		MinTime: minTime,
 	}
 
+	srvMetrics := grpcprom.NewServerMetrics()
+	reg.MustRegister(srvMetrics)
+
 	serv := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
+			srvMetrics.UnaryServerInterceptor(),
 			logging.UnaryServerInterceptor(InterceptorLogger(logger), opts...),
 		),
 		grpc.ChainStreamInterceptor(
+			srvMetrics.StreamServerInterceptor(),
 			logging.StreamServerInterceptor(InterceptorLogger(logger), opts...),
 		),
 		grpc.KeepaliveEnforcementPolicy(
 			kep,
 		),
 	)
+	srvMetrics.InitializeMetrics(serv)
 
 	semaphore := semaphore.NewWeighted(maxWorkers)
 
 	return &DaemonServer{
-		logger:    logger,
-		server:    serv,
-		port:      port,
-		endpoint:  endpoint,
-		workDir:   workDir,
-		semaphore: semaphore,
+		logger:      logger,
+		server:      serv,
+		port:        port,
+		metricsPort: metricsPort,
+		endpoint:    endpoint,
+		workDir:     workDir,
+		semaphore:   semaphore,
 	}, nil
 }
 
@@ -112,6 +134,20 @@ func (d *DaemonServer) Start() error {
 		d.logger.Error("gRPC server shutdown", "error", err)
 		d.server.GracefulStop()
 		d.server.Stop()
+	})
+
+	addr := fmt.Sprintf(":%d", d.metricsPort)
+	metricsServer := &http.Server{Addr: addr}
+	g.Add(func() error {
+		m := http.NewServeMux()
+		m.Handle("/metrics", metricsHandler)
+		metricsServer.Handler = m
+		d.logger.Info("metrics server is running", "port", d.metricsPort)
+		return metricsServer.ListenAndServe()
+	}, func(err error) {
+		if err := metricsServer.Close(); err != nil {
+			d.logger.Error("metrics server shutdown is failed", "error", err)
+		}
 	})
 
 	return g.Run()
