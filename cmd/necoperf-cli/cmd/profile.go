@@ -38,7 +38,7 @@ func NewProfileCommand() *cobra.Command {
 		Short:             "Perform CPU profiling on the target container",
 		Long:              "Perform CPU profiling on the target container",
 		Args:              cobra.ExactArgs(1),
-		ValidArgsFunction: podCandidates,
+		ValidArgsFunction: validArgsCompletionFunc,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			config.podName = args[0]

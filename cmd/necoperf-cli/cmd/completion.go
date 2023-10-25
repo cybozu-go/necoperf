@@ -10,7 +10,7 @@ import (
 	k8sConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 )
 
-func podCandidates(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+func validArgsCompletionFunc(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	if len(args) != 0 {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
