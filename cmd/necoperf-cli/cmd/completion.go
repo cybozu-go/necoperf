@@ -17,16 +17,19 @@ func validArgsCompletionFunc(cmd *cobra.Command, args []string, toComplete strin
 
 	cfg, err := k8sConfig.GetConfig()
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 	k8sClient, err := client.New(cfg, client.Options{})
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
 	pods := &corev1.PodList{}
 	err = k8sClient.List(context.Background(), pods, client.InNamespace(config.namespace))
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
@@ -48,10 +51,12 @@ func containerCompletionFunc(cmd *cobra.Command, args []string, toComplete strin
 
 	cfg, err := k8sConfig.GetConfig()
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
 	k8sClient, err := client.New(cfg, client.Options{})
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
 
@@ -61,6 +66,7 @@ func containerCompletionFunc(cmd *cobra.Command, args []string, toComplete strin
 		Name:      args[0],
 	}, pod)
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
 
@@ -78,16 +84,19 @@ func containerCompletionFunc(cmd *cobra.Command, args []string, toComplete strin
 func namespaceCompletionFunc(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	cfg, err := k8sConfig.GetConfig()
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
 	k8sClient, err := client.New(cfg, client.Options{})
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
 
 	ns := &corev1.NamespaceList{}
 	err = k8sClient.List(context.Background(), ns)
 	if err != nil {
+		cobra.CompError(err.Error())
 		return nil, cobra.ShellCompDirectiveError
 	}
 
