@@ -34,10 +34,11 @@ func isPodReady(pod *corev1.Pod) bool {
 
 func NewProfileCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "profile",
-		Short: "Perform CPU profiling on the target container",
-		Long:  "Perform CPU profiling on the target container",
-		Args:  cobra.ExactArgs(1),
+		Use:               "profile",
+		Short:             "Perform CPU profiling on the target container",
+		Long:              "Perform CPU profiling on the target container",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: validArgsCompletionFunc,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.SilenceUsage = true
 			config.podName = args[0]
@@ -95,6 +96,8 @@ func NewProfileCommand() *cobra.Command {
 	cmd.Flags().StringVarP(&config.containerName, "container", "c", "", "Specify the container name to profile")
 	cmd.Flags().DurationVar(&config.timeout, "timeout", 30*time.Second, "Time to run cpu profiling on server")
 	cmd.Flags().StringVar(&config.outputDir, "output-dir", "/tmp", "Directory to output profiling result")
+	cmd.RegisterFlagCompletionFunc("namespace", namespaceCompletionFunc)
+	cmd.RegisterFlagCompletionFunc("container", containerCompletionFunc)
 
 	return cmd
 }
