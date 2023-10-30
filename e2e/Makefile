@@ -27,7 +27,7 @@ help:
 	@echo "stop       Stop the kind cluster"
 
 .PHONY: setup
-setup: bin_dir kubectl kustomize kind
+setup: kubectl kustomize kind
 
 .PHONY: start
 start:
@@ -80,10 +80,6 @@ $(KUBECTL)-$(E2ETEST_K8S_VERSION):
 	mkdir -p $(dir $@)
 	$(CURL) -o $@ https://storage.googleapis.com/kubernetes-release/release/v$(E2ETEST_K8S_VERSION)/bin/$(OS)/$(ARCH)/kubectl
 	chmod a+x $@
-
-.PHONY: bin_dir
-$(BIN_DIR):
-	mkdir -p $(BIN_DIR)
 
 .PHONY: clean
 clean:
