@@ -65,7 +65,8 @@ $(KIND): $(BIN_DIR)
 
 .PHONY: kubectl
 kubectl: $(KUBECTL)
-$(KUBECTL): $(BIN_DIR)
+$(KUBECTL):
+	mkdir -p $(dir $@)
 	$(CURL) -o $(BIN_DIR)/kubectl https://storage.googleapis.com/kubernetes-release/release/v$(E2ETEST_K8S_VERSION)/bin/$(OS)/$(ARCH)/kubectl && chmod a+x $(BIN_DIR)/kubectl
 
 .PHONY: bin_dir
