@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 
@@ -33,22 +32,13 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	By("waiting for profiled-pod to be ready")
-	Eventually(func() error {
+	Eventually(func(g Gomega) {
 		res, err := kubectl(nil, "get", "pod", "profiled-pod", "-o", "json")
-		if err != nil {
-			return err
-		}
-
+		g.Expect(err).NotTo(HaveOccurred())
 		pod := corev1.Pod{}
 		err = json.Unmarshal(res, &pod)
-		if err != nil {
-			return err
-		}
-		if pod.Status.Phase != corev1.PodRunning {
-			return fmt.Errorf("profiled-pod is not running")
-		}
-
-		return nil
+		g.Expect(err).NotTo(HaveOccurred())
+		g.Expect(pod.Status.Phase).To(Equal(corev1.PodRunning))
 	}).Should(Succeed())
 
 	By("creating necoperf-cli pod from manifests")
@@ -56,22 +46,14 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	By("waiting for necoperf-cli pod to be ready")
-	Eventually(func() error {
+	Eventually(func(g Gomega) {
 		res, err := kubectl(nil, "get", "pod", "necoperf-client", "-o", "json")
-		if err != nil {
-			return err
-		}
+		g.Expect(err).NotTo(HaveOccurred())
 
 		pod := corev1.Pod{}
 		err = json.Unmarshal(res, &pod)
-		if err != nil {
-			return err
-		}
-		if pod.Status.Phase != corev1.PodRunning {
-			return fmt.Errorf("necoperf-client pod is not running")
-		}
-
-		return nil
+		g.Expect(err).NotTo(HaveOccurred())
+		g.Expect(pod.Status.Phase).To(Equal(corev1.PodRunning))
 	}).Should(Succeed())
 
 	By("creating necoperf daemonset from manifest")
@@ -79,28 +61,14 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	By("waiting for necoperf-daemon daemonnset to be ready")
-	Eventually(func() error {
+	Eventually(func(g Gomega) {
 		res, err := kubectl(nil, "get", "daemonset", "necoperf-daemon", "-n", "necoperf", "-o", "json")
-		if err != nil {
-			return err
-		}
-
+		g.Expect(err).NotTo(HaveOccurred())
 		daemonset := appsv1.DaemonSet{}
 		err = json.Unmarshal(res, &daemonset)
-		if err != nil {
-			return err
-		}
-
-		if int(daemonset.Status.NumberAvailable) != daemonsetDesiredNumber {
-			return fmt.Errorf("NumberAvailable of necoperf DaemonSet is not %d: %d", daemonsetDesiredNumber, daemonset.Status.NumberAvailable)
-		}
-		if int(daemonset.Status.UpdatedNumberScheduled) != daemonsetDesiredNumber {
-			return fmt.Errorf("UpdatedNumberScheduled of necoperf DaemonSet is not %d: %d", daemonsetDesiredNumber, daemonset.Status.UpdatedNumberScheduled)
-		}
-		if int(daemonset.Status.NumberReady) != daemonsetDesiredNumber {
-			return fmt.Errorf("NumberReady of necoperf DaemonSet is not %d: %d", daemonsetDesiredNumber, daemonset.Status.NumberReady)
-		}
-
-		return nil
+		g.Expect(err).NotTo(HaveOccurred())
+		g.Expect(int(daemonset.Status.NumberAvailable)).To(Equal(daemonsetDesiredNumber))
+		g.Expect(int(daemonset.Status.UpdatedNumberScheduled)).To(Equal(daemonsetDesiredNumber))
+		g.Expect(int(daemonset.Status.NumberReady)).To(Equal(daemonsetDesiredNumber))
 	}, 3*time.Minute).Should(Succeed())
 })
