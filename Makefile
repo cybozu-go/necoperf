@@ -61,7 +61,7 @@ docker-build: build
 
 .PHONY: e2e
 e2e:
-	make -C e2e
+	$(MAKE) -C e2e
 
 ##@ Tools
 
