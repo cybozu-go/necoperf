@@ -53,9 +53,14 @@ stop:
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE)
-$(KUSTOMIZE):
+$(KUSTOMIZE): $(KUSTOMIZE)-$(KUSTOMIZE_VERSION)
+	ln -sf $(notdir $<) $@
+
+$(KUSTOMIZE)-$(KUSTOMIZE_VERSION):
 	mkdir -p $(dir $@)
-	$(CURL) $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(BIN_DIR)
+	curl -fsL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv$(KUSTOMIZE_VERSION)/kustomize_v$(KUSTOMIZE_VERSION)_linux_amd64.tar.gz | \
+	tar -xzf - -O > $@
+	chmod a+x $@
 
 .PHONY: kind
 kind: $(KIND)
