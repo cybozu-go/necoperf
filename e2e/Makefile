@@ -53,7 +53,8 @@ stop:
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE)
-$(KUSTOMIZE): $(BIN_DIR)
+$(KUSTOMIZE):
+	mkdir -p $(dir $@)
 	$(CURL) $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(BIN_DIR)
 
 .PHONY: kind
