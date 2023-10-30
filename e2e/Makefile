@@ -50,7 +50,6 @@ stop:
 	-docker image rm necoperf-cli:dev
 	-docker image prune -f
 
-KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE)
 $(KUSTOMIZE): $(KUSTOMIZE)-$(KUSTOMIZE_VERSION)
