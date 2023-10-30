@@ -59,9 +59,13 @@ $(KUSTOMIZE):
 
 .PHONY: kind
 kind: $(KIND)
-$(KIND): $(BIN_DIR)
-	$(CURL) -o $(KIND) https://github.com/kubernetes-sigs/kind/releases/download/v$(KIND_VERSION)/kind-$(OS)-$(ARCH)
-	chmod a+x $(KIND)
+$(KIND): $(KIND)-$(KIND_VERSION)
+	ln -sf $(notdir $<) $@
+
+$(KIND)-$(KIND_VERSION):
+	mkdir -p $(dir $@)
+	$(CURL) -o $@ https://github.com/kubernetes-sigs/kind/releases/download/v$(KIND_VERSION)/kind-$(OS)-$(ARCH)
+	chmod a+x $@
 
 .PHONY: kubectl
 kubectl: $(KUBECTL)
