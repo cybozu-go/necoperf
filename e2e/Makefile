@@ -76,3 +76,7 @@ $(KUBECTL):
 .PHONY: bin_dir
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
+
+.PHONY: clean
+clean:
+	rm -rf $(BIN_DIR)
