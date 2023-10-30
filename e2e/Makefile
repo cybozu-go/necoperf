@@ -69,9 +69,13 @@ $(KIND)-$(KIND_VERSION):
 
 .PHONY: kubectl
 kubectl: $(KUBECTL)
-$(KUBECTL):
+$(KUBECTL): $(KUBECTL)-$(E2ETEST_K8S_VERSION)
+	ln -sf $(notdir $<) $@
+
+$(KUBECTL)-$(E2ETEST_K8S_VERSION):
 	mkdir -p $(dir $@)
-	$(CURL) -o $(BIN_DIR)/kubectl https://storage.googleapis.com/kubernetes-release/release/v$(E2ETEST_K8S_VERSION)/bin/$(OS)/$(ARCH)/kubectl && chmod a+x $(BIN_DIR)/kubectl
+	$(CURL) -o $@ https://storage.googleapis.com/kubernetes-release/release/v$(E2ETEST_K8S_VERSION)/bin/$(OS)/$(ARCH)/kubectl
+	chmod a+x $@
 
 .PHONY: bin_dir
 $(BIN_DIR):
