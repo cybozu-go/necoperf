@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: profiled-pod
+spec:
+  securityContext:
+    runAsUser: 10000
+    runAsGroup: 10000
+  containers:
+  - name: profiled-pod
+    image: ghcr.io/cybozu/ubuntu:22.04
+    command: ["yes"]
