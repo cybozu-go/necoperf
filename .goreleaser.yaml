@@ -47,7 +47,7 @@ changelog:
 
 release:
   github:
-    owner: zeroalphat
-    name: necoperf-cli
+    owner: cybozu-go
+    name: necoperf
   prerelease: auto
   name_template: "Release {{ .Tag }}"
