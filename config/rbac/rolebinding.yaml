@@ -1,27 +1,27 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: necoperf-cli-rolebinding
+  name: necoperf-cli-binding
   namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: necoperf-cli-role
+  name: necoperf-cli
 subjects:
-- kind: ServiceAccount
-  name: necoperf-sa
-  namespace: default
+  - kind: ServiceAccount
+    name: necoperf-cli
+    namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: necoperf-daemon-rolebinding
+  name: necoperf-cli-service-discovery-binding
   namespace: necoperf
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: necoperf-daemon-role
+  name: necoperf-cli-service-discovery
 subjects:
-- kind: ServiceAccount
-  name: necoperf-sa
-  namespace: default
+  - kind: ServiceAccount
+    name: necoperf-cli
+    namespace: default

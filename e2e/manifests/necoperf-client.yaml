@@ -5,11 +5,11 @@ metadata:
   namespace: default
 spec:
   containers:
-  - name: necoperf-client
-    image: necoperf-cli:dev
-    imagePullPolicy: IfNotPresent
-    command: ["pause"]
+    - name: necoperf-client
+      image: necoperf-cli:dev
+      imagePullPolicy: IfNotPresent
+      command: ["pause"]
   securityContext:
     runAsUser: 10000
     runAsGroup: 10000
-  serviceAccountName: necoperf-sa
+  serviceAccountName: necoperf-cli
