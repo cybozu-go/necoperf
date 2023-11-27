@@ -1,4 +1,4 @@
-include Makefile.versions
+include ../Makefile.versions
 
 ARCH ?= amd64
 OS ?= linux
