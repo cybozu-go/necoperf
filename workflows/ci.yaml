@@ -1,0 +1,30 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+    - 'main'
+jobs:
+  test:
+    name: Small tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: make test
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: make setup
+        working-directory: e2e
+      - run: make start
+        working-directory: e2e
+      - run: make test
+        working-directory: e2e
