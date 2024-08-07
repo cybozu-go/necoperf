@@ -1,5 +1,5 @@
-E2ETEST_K8S_VERSION  := 1.29.2
+E2ETEST_K8S_VERSION  := 1.30.0
 # ref to https://github.com/orgs/flatcar/packages/container/package/flatcar-sdk-amd64
-FLATCAR_VERSION := 3815.0.0
-KIND_VERSION := 0.22.0
+FLATCAR_VERSION := 3815.2.2
+KIND_VERSION := 0.23.0
 KUSTOMIZE_VERSION := 5.4.1
