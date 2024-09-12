@@ -7,7 +7,7 @@ COPY cmd/necoperf-cli cmd/necoperf-cli
 COPY internal internal
 RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o necoperf-cli ./cmd/necoperf-cli
 
-FROM quay.io/cybozu/pause:3.9 as pause
+FROM ghcr.io/cybozu/pause:3.9 as pause
 FROM ghcr.io/cybozu/ubuntu:22.04
 LABEL org.opencontainers.image.source https://github.com/cybozu-go/necoperf
 
