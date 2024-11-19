@@ -1,5 +1,5 @@
 ARG FLATCAR_VERSION
-FROM ghcr.io/cybozu/golang:1.22-jammy as builder
+FROM ghcr.io/cybozu/golang:1.23-jammy as builder
 
 WORKDIR /work
 COPY go.mod go.mod
