@@ -1,5 +1,5 @@
 ARG FLATCAR_VERSION
-FROM ghcr.io/cybozu/golang:1.22-jammy as builder
+FROM ghcr.io/cybozu/golang:1.23-jammy as builder
 
 WORKDIR /work
 COPY go.mod go.mod
@@ -18,6 +18,7 @@ ENV HOME=/home/necoperf
 COPY --from=flatcar /bin/ /bin/
 COPY --from=flatcar /sbin/setcap /sbin/setcap
 COPY --from=flatcar /lib64 /lib64
+COPY --from=flatcar /usr/lib64 /usr/lib64
 COPY --from=flatcar /usr/bin/perf /usr/bin/sleep /usr/bin/
 
 # install perf dependency
