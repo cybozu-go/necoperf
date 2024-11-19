@@ -17,11 +17,11 @@ require (
 	golang.org/x/sync v0.8.0
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
-	k8s.io/api v0.31.2
-	k8s.io/apimachinery v0.31.2
-	k8s.io/client-go v0.31.2
-	k8s.io/cri-api v0.31.2
-	k8s.io/kubernetes v1.31.2
+	k8s.io/api v0.30.1
+	k8s.io/apimachinery v0.30.1
+	k8s.io/client-go v0.30.1
+	k8s.io/cri-api v0.30.1
+	k8s.io/kubernetes v0.30.1
 	sigs.k8s.io/controller-runtime v0.19.1
 )
 
