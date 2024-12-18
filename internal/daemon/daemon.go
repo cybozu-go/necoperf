@@ -22,7 +22,7 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
-	"k8s.io/kubernetes/pkg/kubelet/cri/remote"
+	cri "k8s.io/cri-client/pkg"
 )
 
 type DaemonServer struct {
@@ -169,7 +169,7 @@ func (d *DaemonServer) setupWorkDir() error {
 }
 
 func (d *DaemonServer) setupContainer() error {
-	client, err := remote.NewRemoteRuntimeService(d.endpoint, criTimeout, nil)
+	client, err := cri.NewRemoteRuntimeService(d.endpoint, criTimeout, nil, nil)
 	if err != nil {
 		return err
 	}
