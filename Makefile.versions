@@ -1,5 +1,5 @@
-E2ETEST_K8S_VERSION  := 1.31.0
-ENVTEST_K8S_VERSION := 1.31.0
+E2ETEST_K8S_VERSION  := 1.32.3
+ENVTEST_K8S_VERSION := 1.32.0
 # ref to https://github.com/orgs/flatcar/packages/container/package/flatcar-sdk-amd64
 # In the container image of flatcar 4081.0.0,
 # the method for determining capabilities in perf (version 6.7) has changed.
@@ -7,5 +7,5 @@ ENVTEST_K8S_VERSION := 1.31.0
 # The capability determination method has been improved in perf version 6.12.
 # Until the version of perf included in the flatcar image is upgraded to 6.12, we will keep the flatcar version at 3815.2.2(perf version 6.3).
 FLATCAR_VERSION := 3815.2.2
-KIND_VERSION := 0.25.0
-KUSTOMIZE_VERSION := 5.5.0
+KIND_VERSION := 0.27.0
+KUSTOMIZE_VERSION := 5.6.0

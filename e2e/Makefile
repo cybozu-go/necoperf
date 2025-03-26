@@ -78,7 +78,7 @@ $(KUBECTL): $(KUBECTL)-$(E2ETEST_K8S_VERSION)
 
 $(KUBECTL)-$(E2ETEST_K8S_VERSION):
 	mkdir -p $(dir $@)
-	$(CURL) -o $@ https://storage.googleapis.com/kubernetes-release/release/v$(E2ETEST_K8S_VERSION)/bin/$(OS)/$(ARCH)/kubectl
+	$(CURL) -o $@ https://dl.k8s.io/release/v$(E2ETEST_K8S_VERSION)/bin/$(OS)/$(ARCH)/kubectl
 	chmod a+x $@
 
 .PHONY: clean
