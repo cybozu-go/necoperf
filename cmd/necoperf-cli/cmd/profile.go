@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -10,7 +9,6 @@ import (
 
 	"github.com/cybozu-go/necoperf/internal/client"
 	"github.com/spf13/cobra"
-	corev1 "k8s.io/api/core/v1"
 )
 
 var config struct {
@@ -20,16 +18,6 @@ var config struct {
 	containerName string
 	necoperfNS    string
 	timeout       time.Duration
-}
-
-func isPodReady(pod *corev1.Pod) bool {
-	for _, cond := range pod.Status.Conditions {
-		if cond.Type != corev1.PodReady {
-			continue
-		}
-		return cond.Status == corev1.ConditionTrue
-	}
-	return false
 }
 
 func NewProfileCommand() *cobra.Command {
@@ -58,9 +46,6 @@ func NewProfileCommand() *cobra.Command {
 			pod, err := ds.GetPod(ctx, config.namespace, config.podName)
 			if err != nil {
 				return err
-			}
-			if !isPodReady(pod) {
-				return fmt.Errorf("pod %s is not ready", pod.Name)
 			}
 			containerID, err := ds.GetContainerID(pod, config.containerName)
 			if err != nil {
