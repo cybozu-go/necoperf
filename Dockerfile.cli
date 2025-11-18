@@ -1,4 +1,4 @@
-FROM ghcr.io/cybozu/golang:1.24-noble AS builder
+FROM ghcr.io/cybozu/golang:1.25-noble AS builder
 WORKDIR /work
 COPY go.mod go.mod
 COPY go.sum go.sum
@@ -8,7 +8,7 @@ COPY internal internal
 RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o necoperf-cli ./cmd/necoperf-cli
 
 FROM ghcr.io/cybozu/ubuntu:24.04
-LABEL org.opencontainers.image.source https://github.com/cybozu-go/necoperf
+LABEL org.opencontainers.image.source=https://github.com/cybozu-go/necoperf
 COPY --from=builder /work/necoperf-cli /usr/local/bin/necoperf-cli
 
 USER 1000:1000
