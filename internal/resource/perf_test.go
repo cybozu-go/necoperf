@@ -25,7 +25,7 @@ func TestPerfExecutor(t *testing.T) {
 		t.Fatal(err)
 	}
 	if paranoid >= 0 {
-		t.Skipf("Skip test because perf_event_paranoid is %q", paranoid)
+		t.Skipf("Skip test because perf_event_paranoid is %d", paranoid)
 	}
 
 	_, err = exec.LookPath("perf")
