@@ -84,3 +84,7 @@ $(KUBECTL)-$(E2ETEST_K8S_VERSION):
 .PHONY: clean
 clean:
 	rm -rf $(BIN_DIR)
+
+.PHONY: show-log
+show-log:
+	$(KUBECTL) logs -n necoperf daemonset/necoperf-daemon

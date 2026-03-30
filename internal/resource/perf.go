@@ -61,6 +61,8 @@ func (p *PerfExecuter) ExecRecord(ctx context.Context, workDir string, pid int, 
 	t := timeout.Seconds()
 	perfArgs := []string{
 		constants.RecordSubcommand,
+		"-v",
+		"-e", "cycles",
 		"-ag",
 		"-F", "99",
 		"--call-graph", "dwarf",
@@ -96,7 +98,7 @@ func (p *PerfExecuter) GetEvent(ctx context.Context, path string) (*bytes.Buffer
 
 // Check if events are contained in the perf.data file.
 func (p *PerfExecuter) HasPerfEvent(ctx context.Context, buf *bytes.Buffer) bool {
-	return strings.Contains(buf.String(), constants.CyclesEvent) || strings.Contains(buf.String(), constants.CpuClockEvent)
+	return strings.Contains(buf.String(), constants.CyclesEvent) || strings.Contains(buf.String(), constants.CpuClockEvent) || strings.Contains(buf.String(), constants.TaskClockEvent)
 }
 
 func (p *PerfExecuter) ExecScript(ctx context.Context, path, workDir string) (string, error) {
