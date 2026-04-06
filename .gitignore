@@ -19,3 +19,5 @@
 /bin
 /docs/book
 /include
+/perf.data
+/perf.data.old

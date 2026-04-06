@@ -41,6 +41,14 @@ test-go: test-tools
 	go test -race -v ./...
 	go vet ./...
 
+.PHONY: test-perf
+test-perf:
+	uname -r
+	docker run --name perf --rm --entrypoint perf ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) version
+	docker run --name perf --rm --entrypoint perf --privileged ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) stat sleep 1
+	docker run --name perf --rm --entrypoint perf --privileged -v $(PWD):/out ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) record -ag -F 99 --call-graph dwarf -o /out/perf.data sleep 1
+	docker run --name perf --rm --entrypoint perf --privileged -v $(PWD):/out ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) script -F event -i /out/perf.data | sort -u
+
 .PHONY: generate
 generate:
 	$(MAKE) $(PROTOC_OUTPUTS)
@@ -79,7 +87,7 @@ setup: envtest
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
 $(ENVTEST):
 	mkdir -p bin
-	GOBIN=$(BIN_DIR) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+	GOBIN=$(BIN_DIR) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@$(ENVTEST_VERSION)
 
 $(MDBOOK):
 	mkdir -p bin
