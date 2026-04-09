@@ -5,7 +5,7 @@ ENVTEST := $(BIN_DIR)/setup-envtest
 MDBOOK := $(BIN_DIR)/mdbook
 STATICCHECK := $(BIN_DIR)/staticcheck
 
-PROTOC := $(BIN_DIR)/protoc -I=$(PWD)/include:.
+PROTOC := PATH=$(BIN_DIR):'$(PATH)' $(BIN_DIR)/protoc -I=$(PWD)/include:.
 PROTOC_OUTPUTS = internal/rpc/necoperf.pb.go internal/rpc/necoperf_grpc.pb.go docs/necoperf-grpc.md
 
 .PHONY: all

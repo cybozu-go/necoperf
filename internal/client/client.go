@@ -119,7 +119,7 @@ func (c *Client) SetupGrpcClient(addr string) error {
 		logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 	}
 
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		addr,
 		grpc.WithChainUnaryInterceptor(
 			logging.UnaryClientInterceptor(InterceptorLogger(c.logger), opts...),
