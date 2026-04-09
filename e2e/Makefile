@@ -31,7 +31,7 @@ setup: kubectl kustomize kind
 
 .PHONY: start
 start:
-	$(KIND) create cluster --name=$(KIND_CLUSTER_NAME) --config=$(KIND_CONFIG) --image=kindest/node:v$(E2ETEST_K8S_VERSION) --wait 1m
+	$(KIND) create cluster --name=$(KIND_CLUSTER_NAME) --config=$(KIND_CONFIG) --image=kindest/node:$(KIND_NODE_VERSION) --wait 1m
 	$(MAKE) -C ../ docker-build
 	$(KIND) load docker-image necoperf-daemon:dev --name=$(KIND_CLUSTER_NAME)
 	$(KIND) load docker-image necoperf-cli:dev --name=$(KIND_CLUSTER_NAME)
