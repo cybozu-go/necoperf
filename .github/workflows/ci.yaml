@@ -13,13 +13,11 @@ jobs:
       - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           go-version-file: go.mod
+      - run: make setup
+      - run: make check-generated
+      - run: make lint
       - run: make test
-  perf:
-    name: Run perf on CI env
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - run: make test-perf
+      - run: make build
   e2e:
     name: End-to-end tests
     runs-on: ubuntu-24.04
@@ -29,8 +27,12 @@ jobs:
         with:
           go-version-file: go.mod
       - run: make setup
-        working-directory: e2e
-      - run: make start
-        working-directory: e2e
-      - run: make test
-        working-directory: e2e
+      - run: make -C e2e setup
+      - run: make -C e2e start
+      - run: make -C e2e test
+  perf:
+    name: Run perf on CI env
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - run: make run-perf
