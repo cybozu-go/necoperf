@@ -30,6 +30,8 @@ jobs:
       - run: make -C e2e setup
       - run: make -C e2e start
       - run: make -C e2e test
+      - run: make -C e2e show-log
+        if: always()
   perf:
     name: Run perf on CI env
     runs-on: ubuntu-24.04
