@@ -7,6 +7,7 @@ const (
 	ScriptFileName    = "perf.script"
 	CpuClockEvent     = "cpu-clock:"
 	CyclesEvent       = "cycles:"
+	TaskClockEvent    = "task-clock:"
 )
 
 const (

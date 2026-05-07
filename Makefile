@@ -65,8 +65,8 @@ e2e:
 run-perf:
 	uname -r
 	docker run --name perf --rm --entrypoint perf ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) version
-	docker run --name perf --rm --entrypoint perf --privileged ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) stat sleep 1
-	docker run --name perf --rm --entrypoint perf --privileged -v $(PWD):/out ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) record -ag -F 99 --call-graph dwarf -o /out/perf.data sleep 1
+	docker run --name perf --rm --entrypoint perf --privileged ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) list hw sw
+	docker run --name perf --rm --entrypoint perf --privileged -v $(PWD):/out ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) record -v -e cycles -ag -F 99 --call-graph dwarf -o /out/perf.data sleep 1
 	docker run --name perf --rm --entrypoint perf --privileged -v $(PWD):/out ghcr.io/flatcar/flatcar-sdk-amd64:$(FLATCAR_VERSION) script -F event -i /out/perf.data | sort -u
 
 ##@ Tools
