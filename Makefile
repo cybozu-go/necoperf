@@ -8,6 +8,12 @@ STATICCHECK := $(BIN_DIR)/staticcheck
 PROTOC := PATH=$(BIN_DIR):'$(PATH)' $(BIN_DIR)/protoc -I=$(PWD)/include:.
 PROTOC_OUTPUTS = internal/rpc/necoperf.pb.go internal/rpc/necoperf_grpc.pb.go docs/necoperf-grpc.md
 
+DOCKER_BUILD_ARGS := --build-arg GOPROXY=$(shell go env GOPROXY)
+ifneq ($(wildcard $(HOME)/.netrc),)
+# Pass Takumi Guard credentials to the build when they exist.
+DOCKER_BUILD_ARGS += --secret id=netrc,src=$(HOME)/.netrc
+endif
+
 .PHONY: all
 all: build
 
@@ -54,8 +60,8 @@ docs/necoperf-grpc.md: internal/rpc/necoperf.proto
 
 .PHONY: docker-build
 docker-build:
-	docker build -t necoperf-daemon:dev --build-arg="FLATCAR_VERSION=$(FLATCAR_VERSION)" -f Dockerfile.daemon .
-	docker build -t necoperf-cli:dev -f Dockerfile.cli .
+	docker build $(DOCKER_BUILD_ARGS) -t necoperf-daemon:dev --build-arg="FLATCAR_VERSION=$(FLATCAR_VERSION)" -f Dockerfile.daemon .
+	docker build $(DOCKER_BUILD_ARGS) -t necoperf-cli:dev -f Dockerfile.cli .
 
 .PHONY: e2e
 e2e:
