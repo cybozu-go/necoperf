@@ -1,13 +1,18 @@
 ARG FLATCAR_VERSION
 FROM ghcr.io/cybozu/golang:1.26-noble AS builder
+ARG GOPROXY
 
 WORKDIR /work
 COPY go.mod go.mod
 COPY go.sum go.sum
+# The netrc secret carries Takumi Guard credentials in CI; it is optional so that local builds still work.
+RUN --mount=type=secret,id=netrc,target=/root/.netrc \
+    GOPROXY=${GOPROXY} go mod download
 
 COPY cmd/necoperf-daemon cmd/necoperf-daemon
 COPY internal internal
-RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o necoperf-daemon ./cmd/necoperf-daemon
+# GOPROXY=off: every module is already in the local cache from `go mod download` above.
+RUN CGO_ENABLED=0 GOPROXY=off go build -ldflags="-w -s" -o necoperf-daemon ./cmd/necoperf-daemon
 
 FROM ghcr.io/flatcar/flatcar-sdk-amd64:${FLATCAR_VERSION} AS flatcar
 
