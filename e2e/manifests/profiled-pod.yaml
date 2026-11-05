@@ -8,5 +8,5 @@ spec:
     runAsGroup: 10000
   containers:
   - name: profiled-pod
-    image: ghcr.io/cybozu/ubuntu:22.04
+    image: ghcr.io/cybozu/ubuntu:26.04
     command: ["yes"]
