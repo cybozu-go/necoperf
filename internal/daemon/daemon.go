@@ -169,7 +169,8 @@ func (d *DaemonServer) setupWorkDir() error {
 }
 
 func (d *DaemonServer) setupContainer() error {
-	client, err := cri.NewRemoteRuntimeService(d.endpoint, criTimeout, nil, nil)
+	// useStreaming is false, because only ContainerStatus, which is not a list operation, is used.
+	client, err := cri.NewRemoteRuntimeService(context.Background(), d.endpoint, criTimeout, nil, false)
 	if err != nil {
 		return err
 	}

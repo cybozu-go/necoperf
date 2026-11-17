@@ -1,11 +1,15 @@
 include Makefile.versions
 
 BIN_DIR := $(PWD)/bin
-ENVTEST := $(BIN_DIR)/setup-envtest
-MDBOOK := $(BIN_DIR)/mdbook
-STATICCHECK := $(BIN_DIR)/staticcheck
 
-PROTOC := PATH=$(BIN_DIR):'$(PATH)' $(BIN_DIR)/protoc -I=$(PWD)/include:.
+# CLI tools are managed by aqua. See aqua.yaml.
+# They are executed via `aqua exec` with the versions in aqua.yaml, so PATH does not need to be configured.
+SETUP_ENVTEST := aqua exec -- setup-envtest
+MDBOOK := aqua exec -- mdbook
+STATICCHECK := aqua exec -- staticcheck
+
+# protoc looks up its plugins (protoc-gen-*) from PATH, so the aqua bin directory is added to PATH.
+PROTOC := PATH="$$(aqua root-dir)/bin:$$PATH" aqua exec -- protoc -I=.
 PROTOC_OUTPUTS = internal/rpc/necoperf.pb.go internal/rpc/necoperf_grpc.pb.go docs/necoperf-grpc.md
 
 DOCKER_BUILD_ARGS := --build-arg GOPROXY=$(shell go env GOPROXY)
@@ -26,7 +30,7 @@ check-generated:
 	git diff --exit-code
 
 .PHONY: book
-book: $(MDBOOK)
+book:
 	rm -rf docs/book
 	cd docs; $(MDBOOK) build
 
@@ -38,7 +42,7 @@ lint:
 
 .PHONY: test
 test:
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(BIN_DIR) -p path)" go test ./... -coverprofile cover.out -v
+	KUBEBUILDER_ASSETS="$$($(SETUP_ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(BIN_DIR) -p path)" go test ./... -coverprofile cover.out -v
 
 .PHONY: build
 build:
@@ -78,26 +82,5 @@ run-perf:
 ##@ Tools
 
 .PHONY: setup
-setup: grpctools $(ENVTEST) $(MDBOOK) $(STATICCHECK)
-
-.PHONY: grpctools
-grpctools:
-	mkdir -p $(BIN_DIR)
-	curl -sfL -o protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTOC_VERSION)/protoc-$(PROTOC_VERSION)-linux-x86_64.zip
-	unzip -o protoc.zip bin/protoc 'include/*'
-	rm -f protoc.zip
-	GOBIN=$(BIN_DIR) go install google.golang.org/protobuf/cmd/protoc-gen-go@v$(PROTOC_GEN_GO_VERSION)
-	GOBIN=$(BIN_DIR) go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v$(PROTOC_GEN_GO_GRPC_VERSION)
-	GOBIN=$(BIN_DIR) go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@v$(PROTOC_GEN_DOC_VERSION)
-
-$(ENVTEST):
-	mkdir -p $(BIN_DIR)
-	GOBIN=$(BIN_DIR) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@$(ENVTEST_VERSION)
-
-$(MDBOOK):
-	mkdir -p $(BIN_DIR)
-	curl -fsL https://github.com/rust-lang/mdBook/releases/download/v$(MDBOOK_VERSION)/mdbook-v$(MDBOOK_VERSION)-x86_64-unknown-linux-gnu.tar.gz | tar -C bin -xzf -
-
-$(STATICCHECK):
-	mkdir -p $(BIN_DIR)
-	GOBIN=$(BIN_DIR) go install honnef.co/go/tools/cmd/staticcheck@v$(STATICCHECK_VERSION)
+setup: ## Install tools with aqua.
+	aqua i -l
