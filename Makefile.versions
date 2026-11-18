@@ -1,22 +1,11 @@
+# The versions in this file are updated manually. See docs/maintenance.md.
+# CLI tools (kind, kustomize, kubectl, setup-envtest, protoc, etc.) are managed in aqua.yaml.
+
 # ref to https://github.com/orgs/flatcar/packages/container/package/flatcar-sdk-amd64
-FLATCAR_VERSION := 4593.0.0
+FLATCAR_VERSION := 4757.0.0
 
 # envtest
-ENVTEST_VERSION := release-0.23
-ENVTEST_K8S_VERSION := 1.35.0
+ENVTEST_K8S_VERSION := 1.36.2
 
 # e2e test
-E2ETEST_K8S_VERSION := 1.35.8
-KIND_VERSION := 0.33.0
-KIND_NODE_VERSION := v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0
-KUSTOMIZE_VERSION := 5.8.1
-
-# gRPC
-PROTOC_VERSION := 36.1
-PROTOC_GEN_GO_VERSION := 1.36.12
-PROTOC_GEN_GO_GRPC_VERSION := 1.6.2
-PROTOC_GEN_DOC_VERSION := 1.5.1
-
-# other tools
-MDBOOK_VERSION := 0.5.4
-STATICCHECK_VERSION := 0.8.1
+KIND_NODE_VERSION := v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed

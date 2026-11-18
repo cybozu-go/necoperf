@@ -1,0 +1,28 @@
+# aqua - Declarative CLI Version Manager
+# https://aquaproj.github.io/
+#
+# See docs/maintenance.md for how to update the packages.
+checksum:
+  enabled: true
+  require_checksum: true
+  supported_envs:
+    - darwin
+    - linux
+registries:
+  - type: standard
+    ref: v4.581.1
+packages:
+  # e2e test
+  - name: kubernetes-sigs/kind@v0.33.0
+  - name: kubernetes-sigs/kustomize@kustomize/v5.8.3
+  - name: kubernetes/kubectl@v1.36.4
+  # envtest
+  - name: kubernetes-sigs/controller-runtime/setup-envtest@v0.24.1
+  # gRPC
+  - name: protocolbuffers/protobuf/protoc@v36.2
+  - name: protocolbuffers/protobuf-go/protoc-gen-go@v1.36.12
+  - name: grpc/grpc-go/protoc-gen-go-grpc@cmd/protoc-gen-go-grpc/v1.6.2
+  - name: pseudomuto/protoc-gen-doc@v1.5.1
+  # other tools
+  - name: rust-lang/mdBook@v0.5.4
+  - name: dominikh/go-tools/staticcheck@2026.2.2
